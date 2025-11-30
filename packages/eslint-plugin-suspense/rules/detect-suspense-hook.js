@@ -1,7 +1,3 @@
-/**
- * @fileoverview Detects usage of Suspense-triggering hooks and enforces naming conventions.
- */
-
 module.exports = {
   meta: {
     type: 'problem', // 코드의 로직 문제로 간주
@@ -28,7 +24,6 @@ module.exports = {
       CallExpression(node) {
         // 1. 호출된 함수 이름 확인
         const hookName = node.callee.name;
-
         // 감시 대상: 'use' (React 19), 'lazy', 또는 'useSuspense'로 시작하는 모든 훅
         const isSuspenseTrigger =
           hookName === 'use' ||
@@ -98,13 +93,24 @@ module.exports = {
         } else {
           // [Case B] 일반 컴포넌트(또는 일반 함수)인 경우 -> 사용 주의 경고
           // 훅이 아닌데(대문자로 시작하는 컴포넌트 등) Suspense 훅을 불렀다면 경고 대상
-          context.report({
-            node: node, // 호출한 훅 위치에 노란 줄
-            messageId: 'suspenseTriggerDetected',
-            data: {
-              hookName,
-            },
-          });
+          const isSuspenseComponent = /^Suspense/.test(parentFunctionName); // 예: SuspenseUserProfile
+
+          if (!isSuspenseComponent) {
+            // 1. 이름이 규칙을 안 지켰으면 -> 컴포넌트 이름에 경고를 띄움 ("이름 바꾸세요!")
+            context.report({
+              node: parentIdNode, // 함수 이름 위치 (function UserProfile의 'UserProfile')
+              message:
+                "이 컴포넌트는 내부에서 Suspense를 유발합니다. 컴포넌트 이름을 'Suspense{{name}}' 형식으로 변경하여 호출자가 알 수 있게 하세요.",
+              data: { name: parentFunctionName },
+            });
+          } else {
+            // 2. 이름은 잘 지었는데 감지됨 -> 훅 사용 위치에 가벼운 경고 ("Suspense 잊지 마세요")
+            context.report({
+              node: node,
+              messageId: 'suspenseTriggerDetected',
+              data: { hookName },
+            });
+          }
         }
       },
     };

@@ -4,18 +4,19 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
-import eslintPluginSuspense from '../../packages/eslint-plugin-suspense';
-
+import suspensePlugin from 'eslint-plugin-react-suspense-check';
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    files: ['**/*.{ts,tsx}'],
+    plugins: { 'react-suspense-check': suspensePlugin },
+    files: ['**/*.{js,jsx,ts,tsx}'],
+
     extends: [
+      suspensePlugin.configs.recommended,
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
-      eslintPluginSuspense,
     ],
     languageOptions: {
       ecmaVersion: 2020,
