@@ -46,7 +46,7 @@ import suspensePlugin from "eslint-plugin-react-suspense-check";
 
 export default defineConfig([
   // ... 다른 설정들
-  ...suspensePlugin.configs.recommended,// 추천 설정 적용
+  suspensePlugin.configs.recommended,// 추천 설정 적용
 
  //... 다른 설정들
 ]);

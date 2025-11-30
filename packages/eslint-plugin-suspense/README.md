@@ -1,3 +1,5 @@
+[한국어 가이드 링크](./README.ko.md)
+
 ### 🧐 Why is this necessary?
 
 React Suspense is powerful, but failing to wrap a component that is loading data in a parent `<Suspense>` boundary can cause the entire app to freeze or result in a white screen.
@@ -36,7 +38,7 @@ import suspensePlugin from 'eslint-plugin-react-suspense-check';
 
 export default defineConfig([
   // ... other configs
-  ...suspensePlugin.configs.recommended, // Apply recommended config
+  suspensePlugin.configs.recommended, // Apply recommended config
 
   //... other configs
 ]);
