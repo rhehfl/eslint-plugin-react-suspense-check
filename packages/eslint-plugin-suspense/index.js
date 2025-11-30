@@ -1,5 +1,6 @@
 const detectSuspenseHook = require('./rules/detect-suspense-hook');
 
+// 1. 플러그인 객체 기본 정의
 const plugin = {
   meta: {
     name: 'eslint-plugin-react-suspense-check',
@@ -8,19 +9,20 @@ const plugin = {
   rules: {
     'detect-suspense-hook': detectSuspenseHook,
   },
-  configs: {}, // 아래에서 채움
+  configs: {}, // 일단 비워둠
 };
 
-plugin.configs.recommended = {
+// 2. Recommended 설정 정의 (Flat Config 호환)
+// 핵심: 여기서 plugins에 'plugin' 변수(자기 자신)를 직접 넣어줍니다.
+const recommendedConfig = {
+  name: 'react-suspense-check/recommended', // (선택) 디버깅용 이름
+  files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
   plugins: {
-    'react-suspense-check': plugin,
+    'react-suspense-check': plugin, // ⭐ 여기가 핵심! 자기 자신을 참조
   },
   rules: {
     'react-suspense-check/detect-suspense-hook': 'warn',
   },
-  // ③ (선택사항) 적용할 파일 확장자도 미리 지정해주면 사용자가 편함
-  // 이걸 안 넣으면 모든 파일(.css, .json 등)을 다 찔러봐서 비효율적일 수 있음
-  files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
   languageOptions: {
     parserOptions: {
       ecmaFeatures: {
@@ -29,5 +31,9 @@ plugin.configs.recommended = {
     },
   },
 };
+
+plugin.configs.recommended = recommendedConfig;
+
+plugin.configs['flat/recommended'] = recommendedConfig;
 
 module.exports = plugin;
