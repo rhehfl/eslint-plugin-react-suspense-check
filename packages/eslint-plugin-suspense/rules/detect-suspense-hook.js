@@ -39,7 +39,12 @@ module.exports = {
     const lang = configuration.language || 'en';
     return {
       CallExpression(node) {
-        const hookName = node.callee.name;
+        let hookName = null;
+        if (node.callee.type === 'Identifier') {
+          hookName = node.callee.name;
+        } else if (node.callee.type === 'MemberExpression') {
+          hookName = node.callee.property.name;
+        }
         const isSuspenseTrigger =
           hookName === 'use' ||
           hookName === 'lazy' ||
@@ -92,7 +97,7 @@ module.exports = {
             node: parentIdNode,
             messageId: `hookRenamingRequired_${lang}`,
             data: {
-              suggestedName,
+              suggestedName: suggestedName,
             },
           });
         } else {
@@ -102,6 +107,9 @@ module.exports = {
             context.report({
               node: parentIdNode,
               messageId: `componentRenamingRequired_${lang}`,
+              data: {
+                name: parentFunctionName,
+              },
             });
           }
         }
