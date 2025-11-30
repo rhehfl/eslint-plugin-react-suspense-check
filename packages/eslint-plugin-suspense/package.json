@@ -1,8 +1,11 @@
 {
   "name": "eslint-plugin-react-suspense-check",
   "version": "1.0.0",
-  "description": "ESLint plugin to detect Suspense triggering hooks",
+  "description": "ESLint plugin to enforce naming conventions for React Suspense safety",
   "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,11 +14,30 @@
     "eslintplugin",
     "eslint-plugin",
     "react",
-    "suspense"
+    "suspense",
+    "naming-convention",
+    "hook",
+    "lint",
+    "analysis"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Your Name <your.email@example.com> (https://your-website.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhehfl/eslint-plugin-react-suspense-check.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rhehfl/eslint-plugin-react-suspense-check/issues"
+  },
+  "homepage": "https://github.com/rhehfl/eslint-plugin-react-suspense-check#readme",
   "peerDependencies": {
     "eslint": ">=8.0.0"
-  }
+  },
+  "files": [
+    "index.js",
+    "rules",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ]
 }
