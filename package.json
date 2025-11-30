@@ -1,8 +1,8 @@
 {
   "name": "eslint-plugin-react-suspense-check",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
+    "start:demo": "pnpm --filter my-demo dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
