@@ -100,15 +100,8 @@ module.exports = {
             context.report({
               node: parentIdNode, // 함수 이름 위치 (function UserProfile의 'UserProfile')
               message:
-                "이 컴포넌트는 내부에서 Suspense를 유발합니다. 컴포넌트 이름을 'Suspense{{name}}' 형식으로 변경하여 호출자가 알 수 있게 하세요.",
+                "이 컴포넌트는 내부에서 Suspense를 유발합니다! 컴포넌트 이름을 'Suspense{{name}}' 형식으로 변경하여 호출자가 <Suspense >를 사용할 수 있도록 해주세요.",
               data: { name: parentFunctionName },
-            });
-          } else {
-            // 2. 이름은 잘 지었는데 감지됨 -> 훅 사용 위치에 가벼운 경고 ("Suspense 잊지 마세요")
-            context.report({
-              node: node,
-              messageId: 'suspenseTriggerDetected',
-              data: { hookName },
             });
           }
         }

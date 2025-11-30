@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { useSuspenseTimer } from './hooks/useSuspenseTimer';
 
 // 데이터를 보여줄 컴포넌트
-function TimerComponent() {
+function SuspenseTimerComponent() {
   const message = useSuspenseTimer();
 
   return (
@@ -25,7 +25,7 @@ export default function Page() {
           </div>
         }
       >
-        <TimerComponent />
+        <SuspenseTimerComponent />
       </Suspense>
     </div>
   );
