@@ -46,6 +46,20 @@ import suspensePlugin from "eslint-plugin-react-suspense-check";
 
 export default defineConfig([
   // ... 다른 설정들
+  ...suspensePlugin.configs.recommended,// 추천 설정 적용
+
+ //... 다른 설정들
+]);
+```
+
+or
+
+```JavaScript
+
+import suspensePlugin from "eslint-plugin-react-suspense-check";
+
+export default defineConfig([
+  // ... 다른 설정들
 
    extends: [
       suspensePlugin.configs.recommended, // 추천 설정 적용
@@ -101,7 +115,7 @@ function SuspenseUserProfile() {
 // eslint.config.mjs
 export default [
   {
-    plugins: { 'react-suspense-check': suspensePlugin },
+    //...
     rules: {
       'react-suspense-check/detect-suspense-hook': ['warn', { language: 'kr' }],
     },

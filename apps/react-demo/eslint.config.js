@@ -8,11 +8,12 @@ import suspensePlugin from 'eslint-plugin-react-suspense-check';
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    plugins: { 'react-suspense-check': suspensePlugin },
+    ...suspensePlugin.configs.recommended,
     files: ['**/*.{js,jsx,ts,tsx}'],
-
+    rules: {
+      'react-suspense-check/detect-suspense-hook': ['warn', { language: 'kr' }],
+    },
     extends: [
-      suspensePlugin.configs.recommended,
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
