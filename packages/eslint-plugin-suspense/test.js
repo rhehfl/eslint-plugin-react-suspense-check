@@ -1,133 +1,119 @@
-// test-rule.js
 const { RuleTester } = require('eslint');
+const rule = require('./rules/detect-suspense-hook'); // 👈 작성한 룰 파일 import
 
-// ---------------------------------------------------------
-// 1. 우리가 만든 룰 로직 (여기에 그대로 붙여넣기)
-// ---------------------------------------------------------
-const rule = {
-  meta: {
-    type: 'problem',
-    messages: {
-      suspenseTriggerDetected: '⚡️ Suspense 유발!',
-      hookRenamingRequired: '🛑 이름 바꿔! (제안: {{ suggestedName }})',
-    },
-  },
-  create(context) {
-    return {
-      CallExpression(node) {
-        const hookName = node.callee.name;
-        const isSuspenseTrigger =
-          hookName === 'use' ||
-          hookName === 'lazy' ||
-          (typeof hookName === 'string' && /^useSuspense/.test(hookName));
-
-        if (!isSuspenseTrigger) return;
-
-        let parent = node.parent;
-        while (parent) {
-          if (
-            [
-              'FunctionDeclaration',
-              'ArrowFunctionExpression',
-              'FunctionExpression',
-            ].includes(parent.type)
-          )
-            break;
-          parent = parent.parent;
-        }
-        if (!parent) return;
-
-        let parentName = null;
-        if (parent.type === 'FunctionDeclaration' && parent.id)
-          parentName = parent.id.name;
-        else if (
-          parent.parent.type === 'VariableDeclarator' &&
-          parent.parent.id
-        )
-          parentName = parent.parent.id.name;
-
-        if (!parentName) return;
-
-        const isParentHook = /^use/.test(parentName);
-
-        if (isParentHook) {
-          if (/^useSuspense/.test(parentName)) return; // 통과
-          const suggestedName = parentName.replace(/^use/, 'useSuspense');
-          context.report({
-            node: parent.id || parent.parent.id,
-            messageId: 'hookRenamingRequired',
-            data: { suggestedName },
-          });
-        } else {
-          context.report({
-            node: node,
-            messageId: 'suspenseTriggerDetected',
-          });
-        }
-      },
-    };
-  },
-};
-
-// ---------------------------------------------------------
-// 2. 테스트 실행기 설정
-// ---------------------------------------------------------
 const ruleTester = new RuleTester({
   languageOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
     parserOptions: {
       ecmaFeatures: {
-        jsx: true, // 👈 핵심: JSX 문법(<div /> 등)을 허용한다고 설정!
+        jsx: true,
       },
     },
   },
 });
 
-console.log('🚀 테스트 시작...');
+console.log('🚀 강화된 Suspense 룰 테스트 시작...');
 
 ruleTester.run('detect-suspense-hook', rule, {
   // ✅ 통과해야 하는 코드들 (Valid)
   valid: [
     {
+      // 1. 올바른 훅 네이밍 (useSuspense...)
       code: `
         function useSuspenseUser() {
-          return useSuspenseQuery(options);
+          return use(Promise.resolve());
+        }
+      `,
+    },
+    {
+      // 2. 올바른 컴포넌트 네이밍 (Suspense...)
+      code: `
+        function SuspenseProfile() {
+          const data = useSuspenseQuery();
+          return <div>{data}</div>;
+        }
+      `,
+    },
+    {
+      // 3. HOC (memo) 지원 - 올바른 네이밍
+      code: `
+        const SuspenseMemoComp = React.memo(() => {
+          useSuspenseData();
+          return <div />;
+        });
+      `,
+    },
+    {
+      // 4. 일반 훅 (Suspense 미사용) - 무시되어야 함
+      code: `
+        function useNormalHook() {
+          const [state, setState] = useState();
+          return state;
         }
       `,
     },
     {
       code: `
-        const useSuspenseData = () => {
-          const data = use(Promise.resolve());
-          return data;
+        function fetchData() {
+          // React Hook 규칙 위반이지만, 우리 룰은 '컴포넌트/훅'만 타겟팅하므로 패스
+          useSuspenseQuery(); 
         }
       `,
     },
   ],
 
-  // ❌ 에러가 나야 하는 코드들 (Invalid)
   invalid: [
     {
-      // Case A: 커스텀 훅 이름이 잘못됨
       code: `
         function useUser() {
-          return useSuspenseQuery(options);
+          return use(Promise.resolve());
         }
       `,
-      errors: [{ messageId: 'hookRenamingRequired' }],
+      errors: [
+        {
+          messageId: 'hookRenamingRequired',
+          data: { suggestedName: 'useSuspenseUser' },
+        },
+      ],
     },
     {
-      // Case B: 컴포넌트에서 직접 사용
       code: `
-        function UserProfile() {
-          const data = useSuspenseQuery(options);
+        function Profile() {
+          const data = useSuspenseQuery();
           return <div>{data}</div>;
         }
       `,
-      errors: [{ messageId: 'suspenseTriggerDetected' }],
+      errors: [
+        { messageId: 'componentRenamingRequired', data: { name: 'Profile' } },
+      ],
+    },
+    {
+      code: `
+        const MyInput = forwardRef((props, ref) => {
+          const val = useSuspenseValue();
+          return <input ref={ref} />;
+        });
+      `,
+      errors: [
+        { messageId: 'componentRenamingRequired', data: { name: 'MyInput' } },
+      ],
+    },
+    {
+      options: [{ additionalTriggers: ['useQuery'] }],
+      code: `
+        function useData() {
+          return useQuery('key', fetcher);
+        }
+      `,
+      errors: [
+        {
+          messageId: 'hookRenamingRequired',
+          data: { suggestedName: 'useSuspenseData' },
+        },
+      ],
     },
   ],
 });
 
-console.log('✅ 모든 테스트 통과! 로직이 정상입니다.');
+console.log('✅ 모든 테스트 통과! HOC 및 옵션 기능이 정상 작동합니다.');
