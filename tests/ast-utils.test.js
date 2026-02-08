@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import ASTUtils from '../rules/utils/ast-utils.js';
+import ASTUtils from '../src/rules/utils/ast-utils.js';
 
 describe('ASTUtils 단위 테스트', () => {
   describe('getFunctionName', () => {

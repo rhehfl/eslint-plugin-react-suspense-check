@@ -1,4 +1,4 @@
-import detectSuspenseHook from './rules/detect-suspense-hook.js';
+import detectSuspenseHook from './src/rules/detect-suspense-hook.js';
 
 const plugin = {
   meta: {
