@@ -11,10 +11,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
           version: 8
@@ -24,11 +26,9 @@ jobs:
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@${{ github.repository_owner }}'
       - name: Install dependencies
-        # 여기에 --ignore-workspace를 추가합니다.
         run: pnpm install --no-frozen-lockfile --ignore-workspace
 
       - name: Update package name for GitHub Packages
-        # 설치가 끝난 후 이름을 변경합니다.
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           npm pkg set name="@$OWNER/eslint-plugin-react-suspense-check"
@@ -36,3 +36,11 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          body: 'New version of eslint-plugin-react-suspense-check has been published.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
