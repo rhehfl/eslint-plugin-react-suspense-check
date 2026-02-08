@@ -1,18 +1,15 @@
-const PatternDetector = require('./utils/pattern-detector');
-const ASTHelpers = require('./utils/ast-helpers');
-const messages = require('./utils/messages');
+import PatternDetector from './utils/pattern-detector.js';
+import ASTUtils from './utils/ast-utils.js';
 
-module.exports = {
+const rule = {
   meta: {
     type: 'problem',
     docs: { description: 'Enforce Chain of Suspense naming convention' },
     messages: {
-      hookError_en: messages.en.hookRenamingRequired,
-      hookError_kr: messages.kr.hookRenamingRequired,
-      compError_en: messages.en.componentRenamingRequired,
-      compError_kr: messages.kr.componentRenamingRequired,
-      hocError_en: messages.en.hocRenamingRequired,
-      hocError_kr: messages.kr.hocRenamingRequired,
+      suspenseNamingError_en:
+        "The function '{{name}}' triggers Suspense. Ensure its name includes 'Suspense' or 'Boundary' to warn parent components.",
+      suspenseNamingError_kr:
+        "'{{name}}'에서 Suspense 트리거가 감지되었습니다. 상위에서 이를 인지할 수 있도록 이름에 'Suspense' 또는 'Boundary'를 포함하세요.",
     },
     schema: [
       {
@@ -30,53 +27,36 @@ module.exports = {
     const additionalTriggers = new Set(options.additionalTriggers || []);
     const language = options.language || 'en';
 
-    console.log('[SuspenseCheck] Rule Initialized');
-
     function check(node) {
       if (!PatternDetector.isSuspenseTrigger(node, additionalTriggers)) return;
 
-      console.log('[SuspenseCheck] Trigger Detected:', node.type);
-
-      const { functionNode, hocNode } = ASTHelpers.getOwnerInfo(node);
-
-      if (hocNode) {
-        const id = ASTHelpers.getIdentifier(hocNode);
-        if (id && !/^withSuspense/.test(id.name)) {
-          context.report({
-            node: id,
-            messageId: `hocError_${language}`,
-            data: { suggestedName: id.name.replace(/^with/, 'withSuspense') },
-          });
-          return;
-        }
+      const parent = ASTUtils.findClosestContext(node);
+      if (!parent) return;
+      let funcName = ASTUtils.getFunctionName(parent);
+      if (!funcName || funcName === 'DefaultExport') {
+        const filename = context.getFilename();
+        funcName = filename.split(/[\\/]/).pop().replace(/\..+$/, '');
       }
 
-      const id = ASTHelpers.getIdentifier(functionNode);
-      if (!id) return;
+      const isSuspenseAware = /Suspense|Boundary/i.test(funcName);
 
-      const name = id.name;
-      if (/^use/.test(name)) {
-        if (!/^useSuspense/.test(name)) {
-          context.report({
-            node: id,
-            messageId: `hookError_${language}`,
-            data: { suggestedName: name.replace(/^use/, 'useSuspense') },
-          });
-        }
-      } else if (/^[A-Z]/.test(name)) {
-        if (!/^Suspense/.test(name)) {
-          context.report({
-            node: id,
-            messageId: `compError_${language}`,
-            data: { name },
-          });
-        }
+      if (!isSuspenseAware) {
+        const messageId =
+          language === 'kr'
+            ? 'suspenseNamingError_kr'
+            : 'suspenseNamingError_en';
+
+        context.report({
+          node: parent.id || parent,
+          messageId,
+          data: { name: funcName },
+        });
       }
     }
 
     return {
       CallExpression: check,
-      ThrowStatement: check,
     };
   },
 };
+export default rule;

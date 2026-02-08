@@ -1,6 +1,7 @@
 {
-  "eslint.workingDirectories": [{ "mode": "auto" }],
-  // (선택) 저장 시 자동 수정이 안 된다면 이것도 확인
+  "eslint.workingDirectories": [
+    { "directory": "apps/react-demo", "changeProcessCWD": true, "mode": "auto" }
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   }

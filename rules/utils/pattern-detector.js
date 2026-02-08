@@ -1,24 +1,15 @@
 const SUSPENSE_APIS = new Set(['use', 'lazy']);
-const KNOWN_SUSPENSE_HOOKS = new Set([
-  'useSuspenseQuery',
-  'useSuspenseInfiniteQuery',
-]);
 
 const PatternDetector = {
   isSuspenseTrigger(node, additionalTriggers = new Set()) {
     if (!node) return false;
 
     if (node.type === 'CallExpression') {
-      const name = this.extractName(node);
+      const name = this.getCalleeName(node);
 
       if (!name) return false;
       if (/suspense/i.test(name)) return true;
-      if (
-        SUSPENSE_APIS.has(name) ||
-        KNOWN_SUSPENSE_HOOKS.has(name) ||
-        additionalTriggers.has(name)
-      )
-        return true;
+      if (SUSPENSE_APIS.has(name) || additionalTriggers.has(name)) return true;
 
       return this.hasSuspenseOption(node);
     }
@@ -26,8 +17,7 @@ const PatternDetector = {
     return false;
   },
 
-  // 훅/함수 이름 추출 (MemberExpression 대응)
-  extractName(node) {
+  getCalleeName(node) {
     if (node.callee?.type === 'Identifier') return node.callee.name;
     if (node.callee?.type === 'MemberExpression')
       return node.callee.property.name;
@@ -72,4 +62,4 @@ const PatternDetector = {
   },
 };
 
-module.exports = PatternDetector;
+export default PatternDetector;
