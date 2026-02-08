@@ -15,6 +15,7 @@ export default defineConfig([
     },
     plugins: {
       'react-refresh': reactRefresh,
+      'react-suspense-check': suspensePlugin,
     },
     rules: {
       'react-suspense-check/detect-suspense-hook': ['warn', { language: 'kr' }],

@@ -3,6 +3,7 @@
   "version": "1.0.7",
   "description": "ESLint plugin to enforce naming conventions for React Suspense safety",
   "main": "index.js",
+  "type": "module",
   "engines": {
     "node": ">=16.0.0"
   },

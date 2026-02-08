@@ -7,22 +7,36 @@ module.exports = {
     type: 'problem',
     docs: { description: 'Enforce Chain of Suspense naming convention' },
     messages: {
-      hookError: messages.kr.hookRenamingRequired,
-      compError: messages.kr.componentRenamingRequired,
-      hocError: messages.kr.hocRenamingRequired,
+      hookError_en: messages.en.hookRenamingRequired,
+      hookError_kr: messages.kr.hookRenamingRequired,
+      compError_en: messages.en.componentRenamingRequired,
+      compError_kr: messages.kr.componentRenamingRequired,
+      hocError_en: messages.en.hocRenamingRequired,
+      hocError_kr: messages.kr.hocRenamingRequired,
     },
     schema: [
-      { type: 'object', properties: { additionalTriggers: { type: 'array' } } },
+      {
+        type: 'object',
+        properties: {
+          additionalTriggers: { type: 'array' },
+          language: { type: 'string' },
+        },
+      },
     ],
   },
 
   create(context) {
-    const additionalTriggers = new Set(
-      context.options[0]?.additionalTriggers || [],
-    );
+    const options = context.options[0] || {};
+    const additionalTriggers = new Set(options.additionalTriggers || []);
+    const language = options.language || 'en';
+
+    console.log('[SuspenseCheck] Rule Initialized');
 
     function check(node) {
       if (!PatternDetector.isSuspenseTrigger(node, additionalTriggers)) return;
+
+      console.log('[SuspenseCheck] Trigger Detected:', node.type);
+
       const { functionNode, hocNode } = ASTHelpers.getOwnerInfo(node);
 
       if (hocNode) {
@@ -30,7 +44,7 @@ module.exports = {
         if (id && !/^withSuspense/.test(id.name)) {
           context.report({
             node: id,
-            messageId: 'hocError',
+            messageId: `hocError_${language}`,
             data: { suggestedName: id.name.replace(/^with/, 'withSuspense') },
           });
           return;
@@ -45,13 +59,17 @@ module.exports = {
         if (!/^useSuspense/.test(name)) {
           context.report({
             node: id,
-            messageId: 'hookError',
+            messageId: `hookError_${language}`,
             data: { suggestedName: name.replace(/^use/, 'useSuspense') },
           });
         }
       } else if (/^[A-Z]/.test(name)) {
         if (!/^Suspense/.test(name)) {
-          context.report({ node: id, messageId: 'compError', data: { name } });
+          context.report({
+            node: id,
+            messageId: `compError_${language}`,
+            data: { name },
+          });
         }
       }
     }

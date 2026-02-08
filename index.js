@@ -33,4 +33,4 @@ plugin.configs.recommended = recommendedConfig;
 
 plugin.configs['flat/recommended'] = recommendedConfig;
 
-module.exports = plugin;
+export default plugin;
