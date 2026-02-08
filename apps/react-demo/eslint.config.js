@@ -40,7 +40,6 @@ export default defineConfig([
         { allowConstantExport: true },
       ],
 
-      // ✨ 한국어 옵션 적용 (맨 아래에 적어야 덮어씌워짐)
       'react-suspense-check/detect-suspense-hook': ['warn', { language: 'kr' }],
     },
   },
