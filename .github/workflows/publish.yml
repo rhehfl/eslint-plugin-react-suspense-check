@@ -23,12 +23,16 @@ jobs:
           node-version: '18'
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@${{ github.repository_owner }}'
+      - name: Install dependencies
+        # 여기에 --ignore-workspace를 추가합니다.
+        run: pnpm install --no-frozen-lockfile --ignore-workspace
+
       - name: Update package name for GitHub Packages
+        # 설치가 끝난 후 이름을 변경합니다.
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           npm pkg set name="@$OWNER/eslint-plugin-react-suspense-check"
 
-      - run: pnpm install --no-frozen-lockfile
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
