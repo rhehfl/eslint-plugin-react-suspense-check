@@ -1,5 +1,5 @@
 import { use, memo, forwardRef } from 'react';
-import { useSuspenseTimer } from '../hooks/useSuspenseTimer'; // 기존에 있는 훅 재사용
+import { useSuspenseTimer } from '../hooks/useSuspenseTimer';
 
 // =============================================================================
 // 1. React 'use' Hook 케이스

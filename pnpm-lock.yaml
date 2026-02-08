@@ -49,8 +49,8 @@ importers:
         specifier: ^0.4.24
         version: 0.4.24(eslint@9.39.1)
       eslint-plugin-react-suspense-check:
-        specifier: workspace:*
-        version: link:../..
+        specifier: '*'
+        version: 1.0.6(eslint@9.39.1)
       globals:
         specifier: ^16.5.0
         version: 16.5.0
@@ -533,6 +533,12 @@ packages:
     resolution: {integrity: sha512-nLHIW7TEq3aLrEYWpVaJ1dRgFR+wLDPN8e8FpYAql/bMV2oBEfC37K0gLEGgv9fy66juNShSMV8OkTqzltcG/w==}
     peerDependencies:
       eslint: '>=8.40'
+
+  eslint-plugin-react-suspense-check@1.0.6:
+    resolution: {integrity: sha512-YmG/hqR2lez8QMz5jRRC2mvoV3NrfxYrblt9pe8UZgwEif3tg+LtnIQ+YXvHp8BUdNqBAVeYiLBZdT4XADakVw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      eslint: '>=8.0.0'
 
   eslint-scope@8.4.0:
     resolution: {integrity: sha512-sNXOfKCn74rt8RICKMvJS7XKV/Xk9kA7DyJr8mJik3S7Cwgy3qlkkmyS2uQB3jiJg6VNdZd/pDBJu0nvG2NlTg==}
@@ -1515,6 +1521,10 @@ snapshots:
       - supports-color
 
   eslint-plugin-react-refresh@0.4.24(eslint@9.39.1):
+    dependencies:
+      eslint: 9.39.1
+
+  eslint-plugin-react-suspense-check@1.0.6(eslint@9.39.1):
     dependencies:
       eslint: 9.39.1
 
