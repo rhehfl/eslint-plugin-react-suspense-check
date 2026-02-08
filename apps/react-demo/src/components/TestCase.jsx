@@ -65,7 +65,7 @@ export const SuspenseMemoComponent = memo(function () {
 });
 
 // ❌ Invalid: memo 내부에서 Suspense가 발생하나 변수명이 일반적임
-export const MemoComponent = memo(function () {
+export const MemoComponent = memo(function a() {
   useSuspenseTimer(); // 💥 에러: 'SuspenseMemoComponent'로 변경 제안
   return <div>Memo</div>;
 });

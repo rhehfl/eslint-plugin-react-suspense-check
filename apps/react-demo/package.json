@@ -14,7 +14,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "eslint-plugin-react-suspense-check": "*",
+    "eslint-plugin-react-suspense-check": "link:../../eslint-plugin-react-suspense-check",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
