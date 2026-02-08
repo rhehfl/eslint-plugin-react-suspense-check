@@ -1,4 +1,4 @@
-let cachedPromise: Promise<void> | null = null;
+let cachedPromise = null;
 let isDone = false;
 
 function startTimer() {
