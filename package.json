@@ -1,5 +1,5 @@
 {
-  "name": "@goooduyn/eslint-plugin-react-suspense-check",
+  "name": "eslint-plugin-react-suspense-check",
   "version": "1.0.6",
   "description": "ESLint plugin to enforce naming conventions for React Suspense safety",
   "main": "index.js",
