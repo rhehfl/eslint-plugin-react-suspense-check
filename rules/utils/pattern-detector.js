@@ -32,31 +32,11 @@ const PatternDetector = {
 
       return arg.properties.some((prop) => {
         if (prop.type !== 'Property') return false;
-
-        const keyName =
-          prop.key.type === 'Identifier' ? prop.key.name : prop.key.value;
-        if (keyName !== 'suspense') return false;
-
-        if (prop.value.type === 'Literal' && prop.value.value === true) {
-          return true;
-        }
-
         if (
-          prop.shorthand &&
-          prop.value.type === 'Identifier' &&
-          prop.value.name === 'suspense'
-        ) {
+          (prop.key.name === 'suspense' || prop.key.value === 'suspense') &&
+          prop.value.value === true
+        )
           return true;
-        }
-
-        if (
-          prop.value.type === 'Identifier' &&
-          /suspense/i.test(prop.value.name)
-        ) {
-          return true;
-        }
-
-        return false;
       });
     });
   },
